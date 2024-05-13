@@ -1,0 +1,82 @@
+1. Compare the output of these three commands:
+
+ls
+ls .
+ls "$(pwd)/../week3"
+
+Explain why you see what you see.
+
+For all three of these commands, you see the list of files that are in the week3 subdirectory. Having the "." indicates that you're executing command where you currently exist, which is not strictly necessary here. ".." goes back one by subdirectory, but then by specifying to go to "week3", you are coming back to our current location.
+
+2. Try the following two commands:
+
+wc -l *.csv
+cat *.csv | wc -l
+
+The first prints filenames and line counts. The second prints a bare number. Why does it print that number, and why does it not print any filenames?
+
+In the second command, the output prints just the total word count number because you are concatenating the strings across all .csv files and then listing the word count just for this group of strings.
+
+3. You want to count the total number of lines in all CSV files and try this command:
+
+cat *.csv | wc -l species.csv
+
+What happens and why?
+
+You only get the word count for species.csv. This is because even though you are concatenating all strings from .csv files into a single group of strings in the first step, in the second step, you are saying to only list the word count from species.csv, which still exists as its own entity.
+
+4. You’re given
+
+name=Moe
+
+and you’d like to print “Moe_Howard”. You try this:
+
+echo "$name_Howard"
+
+but that doesn’t quite work. What fix can you apply to $name to make this command give the desired effect?
+
+echo "${name}_Howard"
+
+5. You create a script and run it like so:
+
+bash myscript.sh *.csv
+
+What are the values of variables $1 and $#? Explain why the script does not see just one argument passed to it.
+
+The value of variable $1 is the name of the first .csv file that the bash script will run for, and the value of variable $# is the total number of .csv files that the bash script will run for. The script does not see just one argument passed to it because the *.csv wildcard is replaced by all matching filenames, which are each treated as a seperate argument.
+
+6. You create a script and run it like so:
+
+bash myscript.sh "$(date)" $(date)
+
+In your script, what is the value of variable $3?
+
+'May'
+
+7. Create a file you don’t care about (because you’re about to destroy it):
+
+echo "yo ho a line of text" > junk_file.txt
+echo "another line" >> junk_file.txt
+
+You want to sort the lines in this file, so you try:
+
+sort junk_file.txt
+
+Well that prints the lines in sorted order, but it doesn’t actually change the file. You recall section 7 and try:
+
+sort junk_file.txt > junk_file.txt
+
+What happens and why? How can you sort the lines in your file? (Hint: it involves creating a second file and using mv.)
+
+You get an empty file because the redirection command, ">", is executed and clears the file contents before the "sort" command is executed.
+
+Correct way to sort the lines in the file:
+sort junk_file.txt > temp_sorted.txt && mv temp_sorted.txt junk_file.txt
+
+8. You want to delete all files ending in .csv, so you type (don’t actually try this):
+
+rm * .csv
+
+but as can be seen, your thumb accidentally hit the space bar and you got an extra space in there. What will rm do in this case?
+
+In this case, the "rm" command will remove all files in the current subdirectory because the wildcard by itself selects all of these files. Seperately, it would also try to delete a file named just ".csv", though this is redundant because it would already by getting rid of all files.

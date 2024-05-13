@@ -1,0 +1,41 @@
+
+```{r}
+library(tidyverse)
+#library(DBI)
+library(dbplyr)
+library(duckdb)
+```
+
+```{r}
+# connect to duckdb database
+conn <- dbConnect(duckdb::duckdb(), "database.db")
+```
+
+```{r}
+# load tables
+egg_table <- tbl(conn, "Bird_eggs")
+nest_table <- tbl(conn, "Bird_nests")
+personnel_table <- tbl(conn, "Personnel")
+```
+
+```{r}
+# Perform the joins and aggregation
+result <- nest_table %>%
+  inner_join(egg_table, by = c("Nest_ID", "Site", "Year", "Book_page")) %>%
+  inner_join(personnel_table, by = c("Observer" = "Abbreviation")) %>%
+  group_by(Name) %>%
+  summarize(total_eggs = sum(Egg_num), .groups = 'drop') %>%
+  slice_max(n = 3, order_by = total_eggs)
+
+# Print the results
+print(result)
+```
+
+```{r}
+# Display the generated SQL query
+show_query(result)
+```
+
+
+
+
